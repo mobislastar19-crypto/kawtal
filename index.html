@@ -3,53 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAWTA L - Monde Entier</title>
+<title>KAWTA L V2 - Monde Entier</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#E5DDD5;display:flex;justify-content:center;min-height:100vh}
-.app{width:100%;max-width:430px;background:#E5DDD5;display:flex;flex-direction:column;height:100vh}
-.header{background:linear-gradient(135deg,#0F9D58,#128C7E);color:white;padding:12px 16px;display:flex;align-items:center;gap:12px}
-.logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0F9D58}
+.app{width:100%;max-width:430px;background:#E5DDD5;display:flex;flex-direction:column;height:100vh;position:relative}
+.header{background:linear-gradient(135deg,#0F9D58,#128C7E);color:white;padding:12px 16px;display:flex;align-items:center;gap:12px;justify-content:space-between}
+.h-left{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0F9D58;overflow:hidden;cursor:pointer}
+.logo img{width:100%;height:100%;object-fit:cover}
+.lang{display:flex;gap:5px}
+.lang button{background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 10px;border-radius:12px;font-size:12px;cursor:pointer}
+.lang button.active{background:white;color:#0F9D58;font-weight:bold}
 .chat{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-.msg{max-width:75%;padding:10px 14px;border-radius:12px;font-size:15px;box-shadow:0 1px 2px rgba(0,0,0,0.1)}
+.msg{max-width:78%;padding:10px 14px;border-radius:12px;font-size:15px;box-shadow:0 1px 2px rgba(0,0,0,0.1);word-wrap:break-word}
 .other{background:white;align-self:flex-start}
 .me{background:#DCF8C6;align-self:flex-end}
 .welcome{text-align:center;background:white;padding:16px;border-radius:14px;margin:10px 0}
-.welcome h2{color:#0F9D58}
-.input{background:#F0F0F0;padding:10px;display:flex;gap:10px}
-.input input{flex:1;padding:12px 16px;border:none;border-radius:22px;outline:none}
-.input button{background:#0F9D58;color:white;border:none;width:46px;height:46px;border-radius:50%;font-size:22px}
+.welcome h2{color:#0F9D58;font-size:18px}
+.input{background:#F0F0F0;padding:10px;display:flex;gap:10px;align-items:center}
+.input input{flex:1;padding:12px 16px;border:none;border-radius:22px;outline:none;font-size:15px}
+.input button{background:#0F9D58;color:white;border:none;width:46px;height:46px;border-radius:50%;font-size:22px;cursor:pointer}
+.profile-modal{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:10}
+.profile-box{background:white;padding:20px;border-radius:16px;width:85%;text-align:center}
+.profile-box input{margin:10px 0;width:100%;padding:10px}
+.profile-box button{background:#0F9D58;color:white;border:none;padding:10px 20px;border-radius:20px;margin-top:10px;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="app">
 <div class="header">
-<div class="logo">KL</div>
-<div><h1>KAWTA L</h1><p>L'Union - Pour tout le monde 🌍</p></div>
+<div class="h-left">
+<div class="logo" id="logoBtn" onclick="openProfile()">KL</div>
+<div><h1 style="font-size:20px">KAWTA L</h1><p id="subtitle" style="font-size:12px">L'Union - Pour tout le monde 🌍</p></div>
+</div>
+<div class="lang">
+<button id="btn-fr" class="active" onclick="setLang('fr')">FR</button>
+<button id="btn-pul" onclick="setLang('pul')">PUL</button>
+<button id="btn-en" onclick="setLang('en')">EN</button>
+</div>
 </div>
 <div class="chat" id="chat">
-<div class="welcome">
-<h2>Bienvenue dans KAWTA L 💚</h2>
-<p>L'app qui unit le monde entier !<br>Tout le monde peut causer ici.<br>Pas seulement les Peuls, TOUT LE MONDE !</p>
-<br><b style="color:#0F9D58">🌍 Ouverte à tous - Free for all</b>
-</div>
-<div class="msg other">Salam ! Bienvenue sur KAWTA L monde entier ! 🌍</div>
-<div class="msg me">Merci ! Maintenant c'est pour tout le monde ! 💚</div>
+<div class="welcome" id="welcomeBox"></div>
 </div>
 <div class="input">
 <input id="input" type="text" placeholder="Message pour le monde...">
 <button onclick="send()">➤</button>
 </div>
+<div class="profile-modal" id="profileModal">
+<div class="profile-box">
+<h3 style="color:#0F9D58">Ton profil 🌍</h3>
+<p>Choisis ta photo</p>
+<input type="file" id="photoInput" accept="image/*">
+<input type="text" id="nameInput" placeholder="Ton nom">
+<button onclick="saveProfile()">Enregistrer</button>
+<button onclick="closeProfile()" style="background:#888">Fermer</button>
+</div>
+</div>
 </div>
 <script>
+let currentLang='fr';
+const texts={
+fr:{
+subtitle:"L'Union - Pour tout le monde 🌍",
+welcomeTitle:"Bienvenue dans KAWTA L 💚",
+welcomeText:"L'app qui unit le monde entier!<br>Tout le monde peut causer ici.<br>Pas seulement les Peuls, TOUT LE MONDE!",
+open:"🌍 Ouverte à tous - Free for all",
+ph:"Message pour le monde...",
+msg1:"Salam! Bienvenue sur KAWTA L monde entier! 🌍",
+msg2:"Merci! Maintenant c'est pour tout le monde! 💚",
+reply:"Bien reçu! 🌍 KAWTA L pour tous!"
+},
+en:{
+subtitle:"Unity - For everyone 🌍",
+welcomeTitle:"Welcome to KAWTA L 💚",
+welcomeText:"The app that unites the whole world!<br>Everyone can chat here.<br>Not only Fulani, EVERYONE!",
+open:"🌍 Open to all - Free for all",
+ph:"Message for the world...",
+msg1:"Hello! Welcome to KAWTA L worldwide! 🌍",
+msg2:"Thanks! Now it's for everyone! 💚",
+reply:"Got it! 🌍 KAWTA L for all!"
+},
+pul:{
+subtitle:"Kawtal - wonande kala 🌍",
+welcomeTitle:"Jaɓaama e KAWTA L 💚",
+welcomeText:"App mo hawritii aduna fof!<br>Kala neɗo waawi haaldude doo.<br>Wonaa Pullo tan, KALAAA!",
+open:"🌍 Udditaama wonande kala",
+ph:"Bataake wonande aduna...",
+msg1:"Salaam! Jaɓɓaama e KAWTA L aduna! 🌍",
+msg2:"A jaaraama! Jooni wonande kala! 💚",
+reply:"Njaɓɓii! 🌍 KAWTA L wonande kala!"
+}
+};
+function setLang(l){
+currentLang=l;
+document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+document.getElementById('btn-'+l).classList.add('active');
+renderWelcome();
+document.getElementById('input').placeholder=texts[l].ph;
+localStorage.setItem('kawtal_lang',l);
+}
+function renderWelcome(){
+const t=texts[currentLang];
+document.getElementById('subtitle').innerHTML=t.subtitle;
+document.getElementById('welcomeBox').innerHTML=`<h2>${t.welcomeTitle}</h2><p>${t.welcomeText}</p><br><b style="color:#0F9D58">${t.open}</b><div style="margin-top:12px" id="initMsgs"></div>`;
+const initDiv=document.getElementById('initMsgs');
+initDiv.innerHTML=`<div class="msg other" style="margin:8px auto;max-width:90%">${t.msg1}</div><div class="msg me" style="margin:8px 0 8px auto;max-width:90%">${t.msg2}</div>`;
+loadMessages();
+}
 const chat=document.getElementById('chat');
 const input=document.getElementById('input');
+function loadMessages(){
+const saved=JSON.parse(localStorage.getItem('kawtal_msgs')||'[]');
+saved.forEach(m=>{
+const d=document.createElement('div');d.className='msg '+(m.me?'me':'other');d.textContent=m.text;chat.appendChild(d);
+});
+chat.scrollTop=chat.scrollHeight;
+}
 function send(){
 const t=input.value.trim();if(!t)return;
-const d=document.createElement('div');d.className='msg me';d.textContent=t;chat.appendChild(d);input.value='';chat.scrollTop=chat.scrollHeight;
-setTimeout(()=>{const r=document.createElement('div');r.className='msg other';r.textContent="Bien reçu ! 🌍 KAWTA L pour tous !";chat.appendChild(r);chat.scrollTop=chat.scrollHeight;},800);
+const d=document.createElement('div');d.className='msg me';d.textContent=t;chat.appendChild(d);
+let msgs=JSON.parse(localStorage.getItem('kawtal_msgs')||'[]');
+msgs.push({text:t,me:true});localStorage.setItem('kawtal_msgs',JSON.stringify(msgs));
+input.value='';chat.scrollTop=chat.scrollHeight;
+setTimeout(()=>{
+const r=document.createElement('div');r.className='msg other';r.textContent=texts[currentLang].reply;chat.appendChild(r);
+msgs.push({text:texts[currentLang].reply,me:false});localStorage.setItem('kawtal_msgs',JSON.stringify(msgs));
+chat.scrollTop=chat.scrollHeight;
+},800);
 }
 input.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
+function openProfile(){document.getElementById('profileModal').style.display='flex'}
+function closeProfile(){document.getElementById('profileModal').style.display='none'}
+function saveProfile(){
+const name=document.getElementById('nameInput').value;
+const file=document.getElementById('photoInput').files[0];
+if(name) localStorage.setItem('kawtal_name',name);
+if(file){
+const reader=new FileReader();
+reader.onload=e=>{
+localStorage.setItem('kawtal_photo',e.target.result);
+document.getElementById('logoBtn').innerHTML=`<img src="${e.target.result}">`;
+closeProfile();
+};
+reader.readAsDataURL(file);
+}else{closeProfile();}
+}
+window.onload=()=>{
+const savedLang=localStorage.getItem('kawtal_lang')||'fr';
+currentLang=savedLang;
+setLang(savedLang);
+const photo=localStorage.getItem('kawtal_photo');
+if(photo) document.getElementById('logoBtn').innerHTML=`<img src="${photo}">`;
+const name=localStorage.getItem('kawtal_name');
+if(name) document.getElementById('nameInput').value=name;
+};
 </script>
 </body>
-</html>
+  </html>
