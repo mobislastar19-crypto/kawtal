@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAWTA L - L'Union</title>
+<meta name="theme-color" content="#0F9D58">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#E5DDD5;display:flex;justify-content:center;height:100vh}
+.app{width:100%;max-width:430px;background:#fff;display:flex;flex-direction:column;box-shadow:0 0 20px rgba(0,0,0,0.2)}
+.header{background:linear-gradient(135deg,#0F9D58,#0b7a43);color:white;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0F9D58;font-size:18px}
+.header h1{font-size:20px;letter-spacing:1px}.header p{font-size:11px;opacity:0.9}
+.chat-area{flex:1;background:#E5DDD5;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:75%;padding:10px 14px;border-radius:12px;font-size:14.5px;line-height:1.4;position:relative}
+.msg.other{background:white;align-self:flex-start;border-top-left-radius:2px;box-shadow:0 1px 0.5px rgba(0,0,0,0.13)}
+.msg.me{background:#DCF8C6;align-self:flex-end;border-top-right-radius:2px;box-shadow:0 1px 0.5px rgba(0,0,0,0.13)}
+.msg .time{font-size:10px;color:#667781;margin-top:4px;text-align:right}
+.input-bar{background:#F0F0F0;padding:8px 10px;display:flex;align-items:center;gap:8px}
+.input-bar input{flex:1;border:none;padding:12px 16px;border-radius:24px;outline:none;font-size:15px}
+.send{width:44px;height:44px;background:#0F9D58;border:none;border-radius:50%;color:white;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.welcome{background:white;margin:20px auto;padding:20px;border-radius:16px;text-align:center;max-width:85%;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.welcome h2{color:#0F9D58;margin-bottom:8px}.welcome p{color:#667781;font-size:14px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="header">
+<div class="logo">K</div>
+<div><h1>KAWTA L</h1><p>L'Union - En ligne</p></div>
+</div>
+<div class="chat-area" id="chat">
+<div class="welcome">
+<h2>Bienvenue dans KAWTA L 💚</h2>
+<p>L'app qui unit les Peuls du monde entier.<br>Commence à causer !</p>
+</div>
+<div class="msg other">Salut ! Bienvenue dans KAWTA L ! C'est l'union ! 💚<div class="time">00:48</div></div>
+</div>
+<div class="input-bar">
+<input id="text" placeholder="Écrire un message KAWTA L..." onkeypress="if(event.key==='Enter')sendMsg()">
+<button class="send" onclick="sendMsg()">➤</button>
+</div>
+</div>
+<script>
+const chat=document.getElementById('chat');const input=document.getElementById('text');
+let messages=JSON.parse(localStorage.getItem('kawtal_msgs')||'[]');
+messages.forEach(m=>{const d=document.createElement('div');d.className='msg '+(m.me?'me':'other');d.innerHTML=m.text+'<div class="time">'+m.time+'</div>';chat.appendChild(d);});
+function sendMsg(){const t=input.value.trim();if(!t)return;const time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});const div=document.createElement('div');div.className='msg me';div.innerHTML=t+'<div class="time">'+time+'</div>';chat.appendChild(div);messages.push({text:t,me:true,time});localStorage.setItem('kawtal_msgs',JSON.stringify(messages));input.value='';chat.scrollTop=chat.scrollHeight;setTimeout(()=>{const replies=["Wallah KAWTA L c'est fort ! 💚","L'union fait la force Riri !","On va conquérir le monde !","Peul et fier ! 🔥"];const r=replies[Math.floor(Math.random()*replies.length)];const d=document.createElement('div');d.className='msg other';d.innerHTML=r+'<div class="time">'+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>';chat.appendChild(d);chat.scrollTop=chat.scrollHeight;},1000);}
+</script>
+</body>
+</html>
