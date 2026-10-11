@@ -3,161 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAWTA L V2 - Monde Entier</title>
+<title>KAWTA L V3 - Vrai Chat Monde</title>
+<script src='https://cdn.scaledrone.com/scaledrone.min.js'></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#E5DDD5;display:flex;justify-content:center;min-height:100vh}
-.app{width:100%;max-width:430px;background:#E5DDD5;display:flex;flex-direction:column;height:100vh;position:relative}
-.header{background:linear-gradient(135deg,#0F9D58,#128C7E);color:white;padding:12px 16px;display:flex;align-items:center;gap:12px;justify-content:space-between}
-.h-left{display:flex;align-items:center;gap:12px}
-.logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0F9D58;overflow:hidden;cursor:pointer}
+.app{width:100%;max-width:430px;background:#E5DDD5;display:flex;flex-direction:column;height:100vh}
+.header{background:linear-gradient(135deg,#0F9D58,#128C7E);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.logo{width:40px;height:40px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0F9D58;font-weight:900;cursor:pointer;overflow:hidden}
 .logo img{width:100%;height:100%;object-fit:cover}
-.lang{display:flex;gap:5px}
-.lang button{background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 10px;border-radius:12px;font-size:12px;cursor:pointer}
+.lang button{background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 10px;border-radius:12px;font-size:12px;margin-left:4px}
 .lang button.active{background:white;color:#0F9D58;font-weight:bold}
-.chat{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-.msg{max-width:78%;padding:10px 14px;border-radius:12px;font-size:15px;box-shadow:0 1px 2px rgba(0,0,0,0.1);word-wrap:break-word}
-.other{background:white;align-self:flex-start}
-.me{background:#DCF8C6;align-self:flex-end}
-.welcome{text-align:center;background:white;padding:16px;border-radius:14px;margin:10px 0}
-.welcome h2{color:#0F9D58;font-size:18px}
-.input{background:#F0F0F0;padding:10px;display:flex;gap:10px;align-items:center}
-.input input{flex:1;padding:12px 16px;border:none;border-radius:22px;outline:none;font-size:15px}
-.input button{background:#0F9D58;color:white;border:none;width:46px;height:46px;border-radius:50%;font-size:22px;cursor:pointer}
-.profile-modal{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:10}
-.profile-box{background:white;padding:20px;border-radius:16px;width:85%;text-align:center}
-.profile-box input{margin:10px 0;width:100%;padding:10px}
-.profile-box button{background:#0F9D58;color:white;border:none;padding:10px 20px;border-radius:20px;margin-top:10px;cursor:pointer}
+.chat{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:82%;padding:9px 13px;border-radius:14px;font-size:14px;box-shadow:0 1px 1px rgba(0,0,0,0.1);word-break:break-word}
+.msg small{display:block;font-size:10px;opacity:0.6;margin-bottom:2px}
+.other{background:white;align-self:flex-start;border-bottom-left-radius:4px}
+.me{background:#DCF8C6;align-self:flex-end;border-bottom-right-radius:4px}
+.welcome{background:white;padding:14px;border-radius:14px;text-align:center;margin-bottom:8px}
+.input{background:#F0F0F0;padding:10px;display:flex;gap:8px}
+.input input{flex:1;padding:12px 14px;border:none;border-radius:22px;outline:none}
+.input button{background:#0F9D58;color:white;border:none;width:44px;height:44px;border-radius:50%;font-size:20px}
+.online{font-size:11px;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:10px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:99}
+.box{background:white;padding:20px;border-radius:16px;width:85%;text-align:center}
+.box input{width:100%;padding:10px;margin:8px 0;border-radius:10px;border:1px solid #ddd}
+.box button{background:#0F9D58;color:white;border:none;padding:10px 20px;border-radius:20px;margin-top:10px}
 </style>
 </head>
 <body>
 <div class="app">
 <div class="header">
-<div class="h-left">
-<div class="logo" id="logoBtn" onclick="openProfile()">KL</div>
-<div><h1 style="font-size:20px">KAWTA L</h1><p id="subtitle" style="font-size:12px">L'Union - Pour tout le monde 🌍</p></div>
+<div style="display:flex;align-items:center;gap:10px">
+<div class="logo" id="logoBtn" onclick="openModal()">KL</div>
+<div><div style="font-weight:bold" id="appName">KAWTA L V3</div><div class="online" id="online">● 1 en ligne 🌍</div></div>
 </div>
-<div class="lang">
-<button id="btn-fr" class="active" onclick="setLang('fr')">FR</button>
-<button id="btn-pul" onclick="setLang('pul')">PUL</button>
-<button id="btn-en" onclick="setLang('en')">EN</button>
-</div>
+<div><button id="b-fr" class="active" onclick="setLang('fr')" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 10px;border-radius:12px;font-size:12px">FR</button><button id="b-pul" onclick="setLang('pul')" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 10px;border-radius:12px;font-size:12px">PUL</button><button id="b-en" onclick="setLang('en')" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 10px;border-radius:12px;font-size:12px">EN</button></div>
 </div>
 <div class="chat" id="chat">
-<div class="welcome" id="welcomeBox"></div>
+<div class="welcome" id="welcome"></div>
 </div>
-<div class="input">
-<input id="input" type="text" placeholder="Message pour le monde...">
-<button onclick="send()">➤</button>
+<div class="input"><input id="msgInput" placeholder="Message monde entier..."><button onclick="send()">➤</button></div>
 </div>
-<div class="profile-modal" id="profileModal">
-<div class="profile-box">
-<h3 style="color:#0F9D58">Ton profil 🌍</h3>
-<p>Choisis ta photo</p>
-<input type="file" id="photoInput" accept="image/*">
-<input type="text" id="nameInput" placeholder="Ton nom">
-<button onclick="saveProfile()">Enregistrer</button>
-<button onclick="closeProfile()" style="background:#888">Fermer</button>
-</div>
-</div>
-</div>
+<div class="modal" id="modal"><div class="box"><h3 style="color:#0F9D58">Ton profil 🌍</h3><input id="nameIn" placeholder="Ton nom"><input type="file" id="photoIn" accept="image/*"><br><button onclick="save()">Enregistrer</button></div></div>
 <script>
-let currentLang='fr';
-const texts={
-fr:{
-subtitle:"L'Union - Pour tout le monde 🌍",
-welcomeTitle:"Bienvenue dans KAWTA L 💚",
-welcomeText:"L'app qui unit le monde entier!<br>Tout le monde peut causer ici.<br>Pas seulement les Peuls, TOUT LE MONDE!",
-open:"🌍 Ouverte à tous - Free for all",
-ph:"Message pour le monde...",
-msg1:"Salam! Bienvenue sur KAWTA L monde entier! 🌍",
-msg2:"Merci! Maintenant c'est pour tout le monde! 💚",
-reply:"Bien reçu! 🌍 KAWTA L pour tous!"
-},
-en:{
-subtitle:"Unity - For everyone 🌍",
-welcomeTitle:"Welcome to KAWTA L 💚",
-welcomeText:"The app that unites the whole world!<br>Everyone can chat here.<br>Not only Fulani, EVERYONE!",
-open:"🌍 Open to all - Free for all",
-ph:"Message for the world...",
-msg1:"Hello! Welcome to KAWTA L worldwide! 🌍",
-msg2:"Thanks! Now it's for everyone! 💚",
-reply:"Got it! 🌍 KAWTA L for all!"
-},
-pul:{
-subtitle:"Kawtal - wonande kala 🌍",
-welcomeTitle:"Jaɓaama e KAWTA L 💚",
-welcomeText:"App mo hawritii aduna fof!<br>Kala neɗo waawi haaldude doo.<br>Wonaa Pullo tan, KALAAA!",
-open:"🌍 Udditaama wonande kala",
-ph:"Bataake wonande aduna...",
-msg1:"Salaam! Jaɓɓaama e KAWTA L aduna! 🌍",
-msg2:"A jaaraama! Jooni wonande kala! 💚",
-reply:"Njaɓɓii! 🌍 KAWTA L wonande kala!"
-}
+let lang='fr', drone, room, myName=localStorage.getItem('kawtal_name')||'Ami Monde 🌍', myPhoto=localStorage.getItem('kawtal_photo')||'';
+const T={
+fr:{wT:"KAWTA L V3 - VRAI CHAT 🌍",wD:"Maintenant tout le monde se parle EN VRAI!<br>Comme WhatsApp, mais pour le monde entier!",ph:"Message pour le monde..."},
+en:{wT:"KAWTA L V3 - REAL CHAT 🌍",wD:"Now everyone talks FOR REAL!<br>Like WhatsApp, but for the whole world!",ph:"Message for the world..."},
+pul:{wT:"KAWTA L V3 - HAALDUDE GOONGA 🌍",wD:"Jooni kala kaaldata GOONGA!<br>Bana WhatsApp, kono wonande aduna!",ph:"Bataake wonande aduna..."}
 };
-function setLang(l){
-currentLang=l;
-document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
-document.getElementById('btn-'+l).classList.add('active');
-renderWelcome();
-document.getElementById('input').placeholder=texts[l].ph;
-localStorage.setItem('kawtal_lang',l);
+function setLang(l){lang=l;document.querySelectorAll('[id^=b-]').forEach(b=>b.style.background='rgba(255,255,255,0.2)');document.getElementById('b-'+l).style.background='white';document.getElementById('b-'+l).style.color='#0F9D58';document.getElementById('msgInput').placeholder=T[l].ph;renderW();}
+function renderW(){document.getElementById('welcome').innerHTML=`<b style="color:#0F9D58">${T[lang].wT}</b><br><small>${T[lang].wD}</small><br><small style="color:green">● Connecté au monde entier</small>`}
+function openModal(){document.getElementById('modal').style.display='flex';document.getElementById('nameIn').value=myName}
+function save(){
+myName=document.getElementById('nameIn').value||myName;localStorage.setItem('kawtal_name',myName);
+let f=document.getElementById('photoIn').files[0];
+if(f){let r=new FileReader();r.onload=e=>{myPhoto=e.target.result;localStorage.setItem('kawtal_photo',myPhoto);document.getElementById('logoBtn').innerHTML=`<img src="${myPhoto}">`;document.getElementById('modal').style.display='none';};r.readAsDataURL(f);}else document.getElementById('modal').style.display='none';
+if(myPhoto) document.getElementById('logoBtn').innerHTML=`<img src="${myPhoto}">`;
 }
-function renderWelcome(){
-const t=texts[currentLang];
-document.getElementById('subtitle').innerHTML=t.subtitle;
-document.getElementById('welcomeBox').innerHTML=`<h2>${t.welcomeTitle}</h2><p>${t.welcomeText}</p><br><b style="color:#0F9D58">${t.open}</b><div style="margin-top:12px" id="initMsgs"></div>`;
-const initDiv=document.getElementById('initMsgs');
-initDiv.innerHTML=`<div class="msg other" style="margin:8px auto;max-width:90%">${t.msg1}</div><div class="msg me" style="margin:8px 0 8px auto;max-width:90%">${t.msg2}</div>`;
-loadMessages();
-}
-const chat=document.getElementById('chat');
-const input=document.getElementById('input');
-function loadMessages(){
-const saved=JSON.parse(localStorage.getItem('kawtal_msgs')||'[]');
-saved.forEach(m=>{
-const d=document.createElement('div');d.className='msg '+(m.me?'me':'other');d.textContent=m.text;chat.appendChild(d);
+const CHANNEL_ID='y2a5cA1vJ9bR5q7L'; // Canal public gratuit KAWTA L
+drone = new Scaledrone(CHANNEL_ID,{data:{name:myName,color:'#'+Math.floor(Math.random()*16777215).toString(16)}});
+drone.on('open',error=>{
+if(error) return console.error(error);
+room=drone.subscribe('kawtal-monde-v3');
+room.on('open',e=>console.log('Connecté au monde 🌍'));
+room.on('members',m=>{document.getElementById('online').textContent=`● ${m.length} en ligne 🌍`});
+room.on('member_join',m=>{document.getElementById('online').textContent=`● ${document.getElementById('online').textContent.match(/\d+/)?parseInt(document.getElementById('online').textContent.match(/\d+/)[0])+1:2} en ligne 🌍`});
+room.on('data',(data,member)=>{
+if(!member) return;
+let isMe=member.id===drone.clientId;
+let div=document.createElement('div');div.className='msg '+(isMe?'me':'other');
+div.innerHTML=`<small>${isMe?'Toi':member.clientData.name}</small>${data.text}`;
+document.getElementById('chat').appendChild(div);
+document.getElementById('chat').scrollTop=99999;
 });
-chat.scrollTop=chat.scrollHeight;
-}
+});
 function send(){
-const t=input.value.trim();if(!t)return;
-const d=document.createElement('div');d.className='msg me';d.textContent=t;chat.appendChild(d);
-let msgs=JSON.parse(localStorage.getItem('kawtal_msgs')||'[]');
-msgs.push({text:t,me:true});localStorage.setItem('kawtal_msgs',JSON.stringify(msgs));
-input.value='';chat.scrollTop=chat.scrollHeight;
-setTimeout(()=>{
-const r=document.createElement('div');r.className='msg other';r.textContent=texts[currentLang].reply;chat.appendChild(r);
-msgs.push({text:texts[currentLang].reply,me:false});localStorage.setItem('kawtal_msgs',JSON.stringify(msgs));
-chat.scrollTop=chat.scrollHeight;
-},800);
+let t=document.getElementById('msgInput').value.trim();if(!t) return;
+drone.publish({room:'kawtal-monde-v3',message:{text:t}});
+document.getElementById('msgInput').value='';
 }
-input.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
-function openProfile(){document.getElementById('profileModal').style.display='flex'}
-function closeProfile(){document.getElementById('profileModal').style.display='none'}
-function saveProfile(){
-const name=document.getElementById('nameInput').value;
-const file=document.getElementById('photoInput').files[0];
-if(name) localStorage.setItem('kawtal_name',name);
-if(file){
-const reader=new FileReader();
-reader.onload=e=>{
-localStorage.setItem('kawtal_photo',e.target.result);
-document.getElementById('logoBtn').innerHTML=`<img src="${e.target.result}">`;
-closeProfile();
-};
-reader.readAsDataURL(file);
-}else{closeProfile();}
-}
+document.getElementById('msgInput').addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 window.onload=()=>{
-const savedLang=localStorage.getItem('kawtal_lang')||'fr';
-currentLang=savedLang;
-setLang(savedLang);
-const photo=localStorage.getItem('kawtal_photo');
-if(photo) document.getElementById('logoBtn').innerHTML=`<img src="${photo}">`;
-const name=localStorage.getItem('kawtal_name');
-if(name) document.getElementById('nameInput').value=name;
+setLang(localStorage.getItem('kawtal_lang')||'fr');
+if(myPhoto) document.getElementById('logoBtn').innerHTML=`<img src="${myPhoto}">`;
+if(!localStorage.getItem('kawtal_name')) openModal();
 };
 </script>
 </body>
-  </html>
+                                     </html>
