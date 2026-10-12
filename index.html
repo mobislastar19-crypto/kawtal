@@ -1,62 +1,129 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAWTA L - Chat Monde</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#22c55e">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KAWTA L - WhatsApp Monde</title>
+<meta name="theme-color" content="#075E54">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui;background:#111b21;color:#fff;display:flex;flex-direction:column;height:100vh}
-.header{background:#202c33;padding:12px;display:flex;justify-content:space-between;align-items:center}
-.header h1{color:#00a884;font-size:20px}
-.online{font-size:12px;color:#00a884}
-.btn-share{background:#25D366;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-weight:bold}
-#messages{flex:1;overflow-y:auto;padding:15px;background:#0b141a}
-.msg{max-width:75%;padding:8px 10px;border-radius:8px;margin-bottom:10px}
-.msg.other{background:#202c33}
-.msg.me{background:#005c4b;margin-left:auto}
-.msg b{color:#53bdeb;display:block;font-size:12px}
-.time{font-size:10px;opacity:0.6;float:right;margin-top:4px}
-.input-area{background:#202c33;padding:10px;display:flex;gap:8px}
-.input-area input{flex:1;padding:12px;border-radius:20px;border:none;background:#2a3942;color:#fff;outline:none}
-button{background:#00a884;border:none;color:#fff;width:45px;height:45px;border-radius:50%;font-size:20px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#111b21;display:flex;justify-content:center;height:100vh}
+.app{width:100%;max-width:450px;background:#fff;display:flex;flex-direction:column}
+.top{background:#075E54;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.top b{font-size:19px}
+.tabs{display:flex;background:#075E54;color:#fff}
+.tabs span{flex:1;text-align:center;padding:12px 0;font-size:14px;opacity:.6;border-bottom:3px solid transparent;font-weight:600}
+.tabs span.on{opacity:1;border-color:#fff}
+.search{padding:7px 12px;background:#f0f2f5}
+.search input{width:100%;border:none;padding:9px 12px;border-radius:8px;outline:none;background:#fff}
+.list{flex:1;overflow:auto;background:#fff}
+.item{display:flex;padding:11px 14px;gap:12px;border-bottom:1px solid #f5f5f5;align-items:center}
+.item img{width:49px;height:49px;border-radius:50%;object-fit:cover;background:#25D366}
+.item.t{flex:1;overflow:hidden}
+.item.t b{font-size:15px;display:block}
+.item.t p{font-size:13px;color:#667781;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item.d{font-size:11px;color:#667781}
+.status-bar{display:flex;gap:12px;padding:10px 12px;overflow:auto;background:#fff;border-bottom:8px solid #f0f2f5}
+.s{text-align:center;min-width:58px}
+.s div{width:54px;height:54px;border-radius:50%;border:3px solid #25D366;background:#e5ddd5;display:flex;align-items:center;justify-content:center;font-size:22px}
+.s p{font-size:11px;margin-top:4px}
+.chat{position:fixed;inset:0;max-width:450px;margin:0 auto;background:#e5ddd5;display:none;flex-direction:column;z-index:10}
+.chat.on{display:flex}
+.c-top{background:#075E54;color:#fff;padding:8px 10px;display:flex;align-items:center;gap:10px}
+.c-top button{background:none;border:none;color:#fff;font-size:22px}
+.msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:7px;background-image:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');background-size:420px}
+.m{max-width:78%;padding:7px 9px;border-radius:8px;font-size:14px;line-height:1.3;position:relative}
+.m.me{align-self:flex-end;background:#dcf8c6;border-top-right-radius:0}
+.m.other{align-self:flex-start;background:#fff;border-top-left-radius:0}
+.m img,.m video{max-width:100%;border-radius:6px;margin-top:4px}
+.m small{display:block;text-align:right;font-size:10px;color:#667781;margin-top:3px}
+.bar{display:flex;align-items:center;gap:6px;padding:7px;background:#f0f2f5}
+.bar input{flex:1;border:none;padding:11px 14px;border-radius:22px;outline:none}
+.bar button{width:42px;height:42px;border:none;border-radius:50%;background:#25D366;color:#fff;font-size:18px}
+#file{display:none}
 </style>
 </head>
 <body>
-<div class="header">
-<div><h1>KAWTA L 🌍</h1><div class="online">● Monde Entier</div></div>
-<button class="btn-share" onclick="shareApp()">Partager</button>
+<div class="app">
+<div class="top"><b>KAWTA L</b><span>📷 🔍 ⋮</span></div>
+<div class="tabs"><span class="on">DISCUSSIONS</span><span>STATUTS</span><span>APPELS</span></div>
+<div class="status-bar" id="statusBar">
+<div class="s" onclick="addStatus()"><div>+</div><p>Mon statut</p></div>
+<div class="s"><div>🌍</div><p>Monde</p></div>
+<div class="s"><div>🤖</div><p>Meta AI</p></div>
 </div>
-<div id="messages"></div>
-<div class="input-area">
-<input id="pseudo" placeholder="Nom" style="max-width:90px">
-<input id="text" placeholder="Message...">
+<div class="search"><input placeholder="Rechercher ou démarrer discussion" oninput="filter(this.value)"></div>
+<div class="list" id="list"></div>
+</div>
+
+<div class="chat" id="chat">
+<div class="c-top"><button onclick="closeChat()">←</button><img id="cImg" style="width:36px;height:36px;border-radius:50%;background:#25D366"><div style="flex:1"><b id="cName">Monde Entier</b><div style="font-size:11px;opacity:.8" id="cSub">tout le monde, en ligne</div></div><span>📞 📹</span></div>
+<div class="msgs" id="msgs"></div>
+<div class="bar">
+<button onclick="document.getElementById('file').click()">📎</button>
+<input type="file" id="file" accept="image/*,video/*" onchange="sendFile(this)">
+<input id="inp" placeholder="Message" onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">➤</button>
 </div>
+</div>
+
 <script>
-const msgs=document.getElementById('messages');
-function addMsg(name,txt,me=false){
-const d=document.createElement('div');d.className='msg '+(me?'me':'other');
-d.innerHTML=`<b>${name}</b>${txt}<div class="time">${new Date().toLocaleTimeString()}</div>`;
-msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+const contacts=[
+{name:"Monde Entier 🌍 - Tout le monde parle ici",last:"Bienvenue Riri! Envoie photo, vidéo...",time:"maintenant",emoji:"🌍"},
+{name:"Meta AI KAWTA L 🤖",last:"Salut! Je suis ton assistant dans l'app!",time:"maintenant",emoji:"🤖"},
+{name:"Aïcha 🇨🇮",last:"Salut! 💚",time:"10:23",emoji:"👩"},
+{name:"Moussa 🇸🇳",last:"KAWTA L c'est super!",time:"09:15",emoji:"👨"},
+{name:"Fatou 🇲🇱",last:"On est ensemble!",time:"hier",emoji:"👩"}
+];
+let cur=0;
+let store=JSON.parse(localStorage.getItem('kawta_all')||'{}');
+if(!store[0]) store[0]=[{t:"Bienvenue sur KAWTA L Monde Entier 🌍💚",me:0},{t:"Ici TOUT LE MONDE parle ensemble comme WhatsApp! Envoie photos, vidéos, tout est dedans!",me:0}];
+if(!store[1]) store[1]=[{t:"Je suis Meta AI intégré dans KAWTA L 🤖 Pose-moi ce que tu veux!",me:0}];
+
+function renderList(f=""){
+const L=document.getElementById('list'); L.innerHTML="";
+contacts.forEach((c,i)=>{
+if(f &&!c.name.toLowerCase().includes(f.toLowerCase())) return;
+L.innerHTML+=`<div class="item" onclick="openC(${i})"><img src="" alt="${c.emoji}" style="display:flex;align-items:center;justify-content:center;font-size:26px;background:#${i==0?'25D366':'f0f2f5'}">${c.emoji}</img><div class="t"><b>${c.name}</b><p>${c.last}</p></div><div class="d">${c.time}</div></div>`
+});
+}
+function openC(i){cur=i;document.getElementById('chat').classList.add('on');document.getElementById('cName').innerText=contacts[i].name;renderMsgs()}
+function closeChat(){document.getElementById('chat').classList.remove('on')}
+function renderMsgs(){
+const M=document.getElementById('msgs'); M.innerHTML="";
+(store[cur]||[]).forEach(m=>{
+let html=`<div class="m ${m.me?'me':'other'}">${m.t}`;
+if(m.img) html+=`<img src="${m.img}">`;
+if(m.vid) html+=`<video src="${m.vid}" controls></video>`;
+html+=`<small>${m.time||'18:42'} ✓✓</small></div>`;
+M.innerHTML+=html;
+});
+M.scrollTop=M.scrollHeight;
 }
 function send(){
-const p=document.getElementById('pseudo').value||'Riri';
-const t=document.getElementById('text').value;
-if(!t)return;
-addMsg(p,t,true);
-localStorage.setItem('kawta_pseudo',p);
-document.getElementById('text').value='';
+const inp=document.getElementById('inp'); if(!inp.value.trim()) return;
+push({t:inp.value,me:1,time:new Date().toLocaleTimeString().slice(0,5)});
+inp.value="";
+if(cur===1){setTimeout(()=>{push({t:"Meta AI 🤖: J'ai bien reçu! Sur KAWTA L, tout est dedans comme tu voulais 💚",me:0,time:"maintenant"})},800)}
+if(cur===0){setTimeout(()=>{push({t:"Bien reçu Riri! 🌍",me:0,time:"maintenant"})},1000)}
 }
-document.getElementById('pseudo').value=localStorage.getItem('kawta_pseudo')||'';
-addMsg('KAWTA L','Bienvenue Riri ! 💚 Ton appli marche',false);
-function shareApp(){
-if(navigator.share){navigator.share({title:'KAWTA L',text:'Rejoins KAWTA L',url:location.href})}
-else{navigator.clipboard.writeText(location.href);alert('Lien copié !')}
+function push(m){if(!store[cur]) store[cur]=[]; store[cur].push(m); localStorage.setItem('kawta_all',JSON.stringify(store)); contacts[cur].last=m.t.slice(0,30); renderList(); renderMsgs()}
+function sendFile(el){
+const f=el.files[0]; if(!f) return;
+const r=new FileReader();
+r.onload=e=>{
+if(f.type.startsWith('image')) push({t:"📷 Photo",img:e.target.result,me:1,time:"maintenant"});
+else push({t:"🎥 Vidéo",vid:e.target.result,me:1,time:"maintenant"});
+};
+r.readAsDataURL(f);
 }
+function filter(v){renderList(v)}
+function addStatus(){
+const t=prompt("Ton statut KAWTA L:");
+if(t){const b=document.getElementById('statusBar'); b.innerHTML+=`<div class="s"><div>💚</div><p>${t.slice(0,8)}</p></div>`; alert("Statut ajouté!")}
+}
+renderList(); renderMsgs();
 </script>
+</div>
 </body>
 </html>
